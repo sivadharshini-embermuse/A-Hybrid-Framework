@@ -1,0 +1,2 @@
+threshold,precision,recall,f1,roc_auc,pr_auc,true_negative,false_positive,false_negative,true_positive,test_samples
+0.4,0.4167505030181087,0.767662728746815,0.5402233270845219,0.8711396335234418,0.5514202365096624,17581,4638,1003,3314,26536

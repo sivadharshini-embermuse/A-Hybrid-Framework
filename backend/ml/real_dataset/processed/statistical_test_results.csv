@@ -1,0 +1,4 @@
+metric,traditional_mean,all_19_mean,mean_difference,wilcoxon_statistic,p_value,significance
+F1,0.667579029297313,0.6716042980825565,0.00402526878524348,0.0,0.125,Not statistically significant
+ROC_AUC,0.8974783870057434,0.8989212919654714,0.0014429049597279309,0.0,0.125,Not statistically significant
+PR_AUC,0.7193442346986949,0.7218103111902676,0.0024660764915727107,0.0,0.125,Not statistically significant

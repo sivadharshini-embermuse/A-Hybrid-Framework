@@ -1,0 +1,184 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  user-select: none;
+}
+hr {
+  display: none;
+}
+
+h1, h2, h3 {
+  border: none;
+}
+
+section {
+  border: none;
+}
+.admin-dsb{
+  background-image: url("../assets/istockphoto-1221631308-170667a.jpg");
+  background-size: cover;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 30px;
+  text-align: center;
+  color: darkblue;
+}
+
+.deptname{
+    font-family: "times new roman", serif;
+    color: rgb(9, 9, 136);
+    font-size:40px;
+}
+
+.status-bg{
+  background-image: url("../assets/a769ea26-a556-49a5-a998-e3803b6ddc4b.png"); 
+  background-size: cover;
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+.green{
+  color: rgb(3, 109, 3);
+}
+.head{
+    font-size: 29px;
+}
+.three-clm{
+    margin-top:120px ;
+}
+.butoon{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.background-papre{
+  background-image: url("../assets/blueoo.jpg");
+  background-size: cover;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+/* From Uiverse.io by vinodjangid07 */ 
+.Documents-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: fit-content;
+  height: 45px;
+  border: none;
+  padding: 0px 15px;
+  border-radius: 5px;
+  background-color: rgb(27, 191, 241);
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.folderContainer {
+  width: 40px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+}
+.fileBack {
+  z-index: 1;
+  width: 80%;
+  height: auto;
+}
+.filePage {
+  width: 50%;
+  height: auto;
+  position: absolute;
+  z-index: 2;
+  transition: all 0.3s ease-out;
+}
+.fileFront {
+  width: 85%;
+  height: auto;
+  position: absolute;
+  z-index: 3;
+  opacity: 0.95;
+  transform-origin: bottom;
+  transition: all 0.3s ease-out;
+}
+.text {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.Documents-btn:hover .filePage {
+  transform: translateY(-5px);
+}
+.Documents-btn:hover {
+  background-color: rgb(2, 106, 154);
+}
+.Documents-btn:active {
+  transform: scale(0.95);
+}
+.Documents-btn:hover .fileFront {
+  transform: rotateX(30deg);
+}
+.uploading{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self:center;
+  align-content: center;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-image: url(../assets/istockphoto-1221631308-170667a.jpg);
+}
+.ooo{
+  padding: 50px;
+  width: 50%;
+  background-color: rgb(27, 89, 188);
+}
+.buttonuu{
+  border-color: rgb(36, 186, 240);
+  margin: 10px;
+  padding: 10px;
+}
+.buttonkacenter{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.inputseting{
+  padding: 30px;
+  height: 50px;
+  background-color: rgb(191, 223, 255);
+  color: rgb(9, 9, 136);
+}
+.lll{
+  margin: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.form-bg{
+  background-color: rgb(55, 157, 240);
+  background-size: cover;
+}
+.input-box{
+  background-color: rgb(134, 172, 249);
+}
+.selection-box{
+  background-color:rgb(134, 172, 249) ;
+  color:#1414f7;
+}
+.subit{
+  background:rgb(245, 242, 242);
+  color: rgb(40, 141, 249);
+  border: 2px solid rgb(40, 141, 249);
+  border-radius: 5px;
+  font-weight: bold;
+}
