@@ -1,209 +1,345 @@
-# JavaScript/React Change Impact Analysis System
+Impact Analyzer
 
-## Problem
-When JavaScript/React code changes, developers need to understand:
-* **What changed:** Identifying specific file and line modifications.
-* **What files/functions may be affected:** Tracing the ripple effect of a change across the codebase.
-* **How risky the change is:** Determining the likelihood of introducing bugs or regressions.
-* **What action should be taken:** Figuring out what needs to be reviewed, tested, or refactored.
+A Hybrid Framework for Code Change Impact Analysis and Risk Prediction in Software Maintenance
 
-## Solution
-This system automatically analyzes code changes between an original and modified project. It constructs an Abstract Syntax Tree (AST) to understand code semantics, maps out dependencies, evaluates the downstream impact, and uses a Random Forest machine learning model to predict the risk level of the changes, providing actionable recommendations to developers.
+Impact Analyzer is a software maintenance system that helps developers
+understand the potential impact and risk of source-code changes. It
+compares an original repository with a modified repository, detects
+file-level changes, analyzes source-code dependencies, propagates
+structural impact using Breadth-First Search (BFS), predicts change risk
+using machine learning, and presents the results through an interactive
+web interface.
 
-## Key Features
-* Change Detection
-* AST-based Code Analysis
-* Dependency Analysis
-* Impact Analysis
-* Feature Extraction
-* Random Forest Risk Prediction
-* LOW/MEDIUM/HIGH Risk Classification
-* Risk Probabilities
-* Why This Risk Explainability
-* Recommendations
-* Project Explorer
-* Impact Graph
+Project Status: Core implementation and testing completed. IEEE
+paper, final documentation, presentation, and final demonstration are
+being finalized.
 
----
+1. Problem Statement
 
-## Architecture
+Modern JavaScript and TypeScript projects contain interconnected source
+files. A change in one file can therefore affect other files through
+direct or indirect dependencies. Conventional diff tools show what
+changed, but provide limited information about dependency impact,
+potential risk, influential factors, and recommended developer actions.
 
-```mermaid
-flowchart TD
-    A[Original Project ZIP] --> C
-    B[Modified Project ZIP] --> C
-    C[Change Detection] --> D[AST / Code Analysis]
-    D --> E[Dependency Analysis]
-    E --> F[Impact Analysis]
-    F --> G[Feature Extraction]
-    G --> H[Random Forest Model]
-    H --> I[Risk Prediction]
-    I --> J[Explainability]
-    J --> K[Recommendations]
-    K --> L[React Dashboard]
-```
+Impact Analyzer addresses this gap by combining deterministic
+dependency-based analysis with machine-learning-based risk prediction in
+one developer-oriented workflow.
 
-### Responsibilities
-* **Frontend (React/Vite):** Provides the UI for uploading projects, rendering interactive graphs, and displaying risk and impact metrics.
-* **Backend (Node.js/Express):** Handles zip extraction, change detection, AST parsing, dependency mapping, impact analysis, and feature extraction. Serves as the orchestrator.
-* **ML Server (Python/Flask):** Hosts the pre-trained Random Forest model and provides an API endpoint for predicting risk and extracting feature importances based on the features extracted by the Node backend.
+2. Objectives
 
----
+Compare original and modified repositories automatically.
 
-## Technology Stack
-* **Frontend:** React, JavaScript, Vite, `@xyflow/react` (graph visualization), `@dagrejs/dagre` (graph layout)
-* **Backend:** Node.js, Express, `multer` (file upload), `unzipper`, `diff`
-* **Machine Learning:** Python, Flask, `scikit-learn` (Random Forest Classifier)
+Detect added, deleted, modified, and unchanged files.
 
----
+Analyze source-code dependencies.
 
-## Project Structure
+Construct a dependency graph.
 
-```text
-frontend/
-  src/
-    components/      # Reusable UI components (Graph, RiskCard, ExplorerGraph)
-    pages/           # Application views (Dashboard, RiskPrediction, ProjectExplorer)
-backend/
-  controllers/       # Express route handlers (analysisController.js)
-  routes/            # Express routes (analysisRoutes.js, mlRoutes.js)
-  services/          # Core analysis logic (changeDetection, featureExtractor, etc.)
-  ml/                # Python ML API, model training, and dataset building
-  tests/             # Automated test suite using Node native test runner
-```
+Identify direct and indirect impact using BFS.
 
----
+Extract change-related ML features.
 
-## ML Explanation
+Estimate change risk using historical software-change data.
 
-### Input
-The system extracts 17 code/change-related features via AST and dependency analysis:
-`changedLines`, `addedLines`, `removedLines`, `changedFunctions`, `changedVariables`, `directDependencies`, `indirectDependencies`, `totalDependencies`, `businessLogic`, `stateChange`, `uiChange`, `apiChange`, `routingChange`, `stylingChange`, `eventHandlingChange`, `isJavaScript`, `isCSS`.
+Explain influential prediction features.
 
-### Model
-A Scikit-Learn `RandomForestClassifier` trained on synthetic datasets based on rule-based heuristics.
+Generate context-aware developer recommendations.
 
-### Output
-Risk classification (`LOW`, `MEDIUM`, `HIGH`) along with specific probabilities for each class.
+Present analysis through an interactive interface.
 
-### Explainability
-The system currently uses the Random Forest's global `feature_importances_`.
-> **IMPORTANT:** Explicitly, these are GLOBAL model feature importances. They represent what the model prioritizes across the entire dataset. They are **NOT** local explanations for an individual file and do not definitively prove causality for a specific risk prediction.
+3. Proposed Approach
 
----
+Repository Comparison and Change Detection
 
-## Important ML Limitation
-> **LIMITATION:** The current training labels are generated using deterministic rule-based heuristics (in `prepare_dataset.py`). 
-> 
-> Therefore, the approximately 1.00 evaluation accuracy demonstrates that the model successfully learned the synthetic labeling rules. It should **NOT** be interpreted as 100% real-world prediction accuracy. 
-> 
-> Furthermore, the current "Why This Risk?" panel surfaces the global feature importance of the Random Forest. As a result, feature importance values may be the same across different files. This is an expected limitation of using a global explainer rather than a local one (like SHAP).
+The user provides an original repository ZIP and a modified repository
+ZIP. The backend extracts and compares both versions and categorizes
+files as Added, Deleted, Modified, or Unchanged. Modified files
+also contain line-level change information.
 
----
+Dependency and Impact Analysis
 
-## Installation & Running
+AST-based analysis identifies source-code dependency relationships.
+These relationships are represented as a dependency graph. BFS is then
+used to propagate impact from modified files.
 
-### Backend
-Navigate to the backend directory and start the Node server:
-```bash
-cd backend
-npm install
-node server.js
-```
-*(Runs on port 5000)*
+Level 0: Modified file
 
-### ML Server
-Navigate to the ML directory and start the Flask API:
-```bash
-cd backend/ml
-python predict_api.py
-```
-*(Runs on port 8001)*
+Level 1: Directly affected dependent files
 
-### Frontend
-Navigate to the frontend directory and start the Vite dev server:
-```bash
+Level 2+: Indirectly affected files
+
+Machine Learning Risk Prediction
+
+The ML component uses the JIT-on-JavaScript-projects replication
+dataset, covering historical changes from 20 JavaScript projects. The
+implemented representation contains 19 features: 14 traditional JIT
+features and 5 JavaScript-specific features.
+
+The implemented model is HistGradientBoostingClassifier.
+
+Metric       Result
+
+ROC-AUC       0.871
+F1-score      0.540
+PR-AUC        0.551
+
+The strongest reported feature is Lines Added (la), with mean
+importance of approximately 0.328.
+
+A Wilcoxon comparison produced p = 0.125, so the JavaScript-specific
+feature extension was not statistically significant over the traditional
+baseline in the evaluated comparison.
+
+4. System Workflow
+
+Original + Modified Repository
+            |
+            v
+   Repository Processing
+            |
+            v
+      Change Detection
+            |
+            v
+  AST Dependency Analysis
+            |
+            v
+ Dependency Graph Construction
+            |
+            v
+  BFS Impact Propagation
+        /                v           v
+Structural      Feature
+Impact          Extraction
+                  |
+                  v
+             ML Prediction
+                  |
+                  v
+            Explainability
+        \           /
+         v         v
+      Impact + Risk Evidence
+              |
+              v
+ Context-Aware Recommendations
+              |
+              v
+      Interactive Results
+
+5. Application Modules
+
+Dashboard
+
+Main entry point for repository analysis and project overview.
+
+Change Analysis
+
+Displays added, deleted, modified, and unchanged files together with
+file-level differences. Collapsible sections provide progressive
+disclosure for large analysis results.
+
+Impact Graph
+
+Visualizes modified files and their direct and indirect dependencies
+with impact levels.
+
+Project Explorer
+
+Provides repository-level file browsing and source-code inspection.
+
+Recommendations
+
+Converts analysis evidence into developer-oriented guidance describing
+what to review and why it matters.
+
+Risk Prediction
+
+Displays predicted risk, influential features, and model information.
+
+Settings
+
+Provides application-level configuration.
+
+6. Technology Stack
+
+Frontend: React, Vite, JavaScript, @xyflow/react, CSS
+
+Backend: Node.js, Express.js, REST API
+
+Machine Learning: Python, Flask, Scikit-learn,
+HistGradientBoostingClassifier
+
+Analysis: AST-based dependency analysis, dependency graph
+construction, BFS impact propagation, repository comparison, line-level
+change analysis
+
+7. Backend API
+
+Primary analysis endpoint:
+
+POST /api/analyze
+
+The endpoint accepts the original and modified repositories using
+multipart/form-data and returns the analysis result consumed by the
+frontend.
+
+The backend communicates with the Python ML service through:
+
+POST http://127.0.0.1:8001/predict
+
+8. Project Structure
+
+Impact Analyzer
+├── Frontend
+│   ├── Dashboard
+│   ├── Change Analysis
+│   ├── Impact Graph
+│   ├── Project Explorer
+│   ├── Recommendations
+│   ├── Risk Prediction
+│   └── Settings
+│
+├── Backend
+│   ├── Repository Processing
+│   ├── Change Detection
+│   ├── Dependency Analysis
+│   ├── Impact Analysis
+│   └── API Layer
+│
+└── ML Service
+    ├── Feature Extraction
+    ├── Model Prediction
+    └── Explainability
+
+9. Running the Project
+
+Frontend
+
 cd frontend
 npm install
 npm run dev
-```
-*(Runs on port 5173)*
 
----
+Backend
 
-## Testing
-
-To run the backend test suite, use the Node native test runner:
-```bash
 cd backend
-npm test
-```
-**Results: 13 tests passed, 0 failed.**
+npm install
+node server.js
 
-These automated tests cover the core analysis pipeline (Change Detection, Feature Extraction, Impact Analysis, and Integration). 
-*Note: End-to-end UI validation is performed manually.*
+ML Service
 
----
+cd backend/ml
+python predict_api.py
 
-## Demo Workflow
+Use the ports defined by the current project configuration.
 
-1. Start backend
-2. Start ML server
-3. Start frontend
-4. Upload original project
-5. Upload modified project
-6. Run analysis
-7. Show changed files
-8. Show Impact Analysis
-9. Show Risk Prediction
-10. Select a file
-11. Show Why This Risk
-12. Show Recommendations
-13. Show Impact Graph
+10. Testing and Verification
 
----
+The completed implementation was verified through backend and end-to-end
+testing.
 
-## Demo Talking Points
+Backend: 14/14 tests passed, 0 failures.
 
-**Script Summary (~3-5 minutes):**
-> "A developer changes a React project. Instead of manually tracing dependencies and guessing what might break, our system automatically identifies the changes, analyzes their impact, estimates risk, explains the model's reasoning, and recommends what to inspect."
+The E2E verification covered repository upload, change detection,
+dependency analysis, BFS impact propagation, ML prediction, risk
+aggregation, Change Analysis accordions, Impact Graph, Project Explorer,
+Recommendations, Risk Prediction, navigation, data consistency,
+responsiveness, keyboard accessibility, API integration, and
+console/error behavior.
 
-1. **The Problem:** "Tracing changes manually in large React codebases is error-prone and time-consuming."
-2. **The Automation:** "We just upload the original and modified code. The system parses the AST, maps out every import and dependency, and highlights exactly what was touched."
-3. **The Intelligence:** "Our Random Forest model looks at 17 different code features—from how many functions changed to whether it touched core business logic—to assign a Risk Score."
-4. **The Explanation:** "It doesn't just give a score; it explains *why* using feature importances, so developers can trust the output."
-5. **The Value:** "Finally, it surfaces actionable recommendations, turning raw code changes into a prioritized code review checklist. We save time, prevent bugs, and make code review objective."
+The Change Analysis page uses a two-level progressive disclosure
+structure:
 
+Category Accordion
+      |
+      └── Modified Files
+              |
+              └── File Accordion
+                      |
+                      └── Diff Content
 
+Accordion interactions do not mutate the underlying analysis data or
+trigger unnecessary API requests.
 
+11. Key Contributions
 
+The main contribution is the integration of:
 
-Group 1: Change-Size Features (Change size measure pannradhu) — 8 features
-#	Feature	Enna measure pannum
-1	changedLines	-Total எத்தனை lines change aachu
-2	addedLines	-Puதுசா add pannna lines எத்தனை
-3	removedLines	-Delete pannna lines எத்தனை
-4	changedFunctions-	எத்தனை functions change aachu
-5	changedVariables-	எத்தனை variables change aachu
-6	directDependencies-	Andha file-a direct-a use panra files எத்தனை
-7	indirectDependencies	-Indirect-a (2nd level) affect aagra files எத்தனை
-8	totalDependencies	-Direct + indirect total
+Repository-level change detection
 
+AST-based dependency analysis
 
-Group 2: Change-Category Flags (Enna type change nu identify pannradhu) — 7 features
+Dependency graph construction
 
-Idhu ella "1 or 0" values (yes/no):
+BFS-based impact propagation
 
-#	Feature	Enna check pannum
-9	businessLogic	-Calculation/business logic touch panniyacha (1) illaya (0)
-10	stateChange-	React state (useState) touch pannichaa
-11	uiChange	-UI/JSX components touch pannichaa
-12	apiChange	-API call (fetch, axios) touch pannichaa
-13	routingChange	-Routing/navigation touch pannichaa
-14	stylingChange	-CSS/styling touch pannichaa
-15	eventHandlingChange	-onClick/onChange event touch pannichaa
+JIT-based machine-learning risk prediction
 
-Group 3: File-Type Flags (File edhu type nu solradhu) — 2 features
-#	Feature	Enna check pannum
-16	isJavaScript	
-17	isCSS	File .
+Feature-based explainability
+
+Context-aware recommendations
+
+Interactive visualization
+
+The contribution is the integration of deterministic dependency evidence
+and probabilistic risk evidence into a single software-maintenance
+workflow, rather than introducing a new AST, BFS, or JIT algorithm
+individually.
+
+12. Limitations
+
+Dependency analysis is focused on supported JavaScript/TypeScript
+source relationships.
+
+ML performance depends on the quality and representativeness of
+historical change data.
+
+The evaluated JavaScript-specific feature extension was not
+statistically significant in the reported Wilcoxon comparison.
+
+Risk prediction is decision support and does not guarantee that a
+defect will occur.
+
+Dependency impact indicates potential influence rather than
+guaranteed downstream failure.
+
+13. Current Status
+
+Area                  Status
+
+Frontend              Completed
+Backend               Completed
+Change Detection      Completed
+Dependency Analysis   Completed
+BFS Impact Analysis   Completed
+ML Risk Prediction    Completed
+Explainability        Completed
+Recommendations       Completed
+UI/UX Refinement      Completed
+Backend Testing       14/14 Passed
+E2E Verification      Completed
+IEEE Paper            Finalizing
+Documentation         Finalizing
+Presentation          Pending
+Final Demo            Pending
+
+14. Conclusion
+
+Impact Analyzer provides a unified approach for understanding the
+potential impact and risk of software changes. By combining repository
+comparison, dependency analysis, BFS-based impact propagation,
+machine-learning risk prediction, explainability, and recommendations,
+it provides developers with broader change intelligence than a
+conventional file-diff workflow.
+
+The core implementation and verification are complete. The project is
+currently being prepared for final documentation, IEEE paper
+preparation, presentation, and demonstration.
+
+15. Keywords
+
+Software Maintenance, Change Impact Analysis, JavaScript, TypeScript,
+Dependency Analysis, Abstract Syntax Tree, Breadth-First Search,
+Just-In-Time Defect Prediction, Machine Learning, Risk Prediction,
+Explainable AI, Software Change Analysis
